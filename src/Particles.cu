@@ -152,6 +152,78 @@ __global__ void mover_GPU(struct particles* gpu_part, struct EMfield* gpu_field,
         gpu_part->z[id] = zptilde + wptilde*dto2;    
     }
 
+    // update the final position and velocity
+    gpu_part->u[id]= 2.0*uptilde - gpu_part->u[id];
+    gpu_part->v[id]= 2.0*vptilde - gpu_part->v[id];
+    gpu_part->w[id]= 2.0*wptilde - gpu_part->w[id];
+    gpu_part->x[id] = xptilde + uptilde*dt_sub_cycling;
+    gpu_part->y[id] = yptilde + vptilde*dt_sub_cycling;
+    gpu_part->z[id] = zptilde + wptilde*dt_sub_cycling;
+
+    //////////
+    //////////
+    ////////// BC
+
+    // X-DIRECTION: BC particles
+    if (gpu_part->x[id] > gpu_grd->Lx){
+        if (gpu_param->PERIODICX==true){ // PERIODIC
+            gpu_part->x[id] = gpu_part->x[id] - gpu_grd->Lx;
+        } else { // REFLECTING BC
+            gpu_part->u[id] = -gpu_part->u[id];
+            gpu_part->x[id] = 2*gpu_grd->Lx - gpu_part->x[id];
+        }
+    }
+
+    if (gpu_part->x[id] < 0){
+        if (gpu_param->PERIODICX==true){ // PERIODIC
+            gpu_part->x[id] = gpu_part->x[id] + gpu_grd->Lx;
+        } else { // REFLECTING BC
+            gpu_part->u[id] = -gpu_part->u[id];
+            gpu_part->x[id] = -gpu_part->x[id];
+        }
+    }
+
+
+    // Y-DIRECTION: BC particles
+    if (gpu_part->y[id] > gpu_grd->Ly){
+        if (gpu_param->PERIODICY==true){ // PERIODIC
+            gpu_part->y[id] = gpu_part->y[id] - gpu_grd->Ly;
+        } else { // REFLECTING BC
+            gpu_part->v[id] = -gpu_part->v[id];
+            gpu_part->y[id] = 2*gpu_grd->Ly - gpu_part->y[id];
+        }
+    }
+
+        if (gpu_part->y[id] < 0){
+            if (gpu_param->PERIODICY==true){ // PERIODIC
+                gpu_part->y[id] = gpu_part->y[id] + gpu_grd->Ly;
+            } else { // REFLECTING BC
+                gpu_part->v[id] = -gpu_part->v[id];
+                gpu_part->y[id] = -gpu_part->y[id];
+            }
+        }
+                                                                    
+        // Z-DIRECTION: BC particles
+        if (gpu_part->z[id] > gpu_grd->Lz){
+            if (gpu_param->PERIODICZ==true){ // PERIODIC
+                gpu_part->z[id] = gpu_part->z[id] - gpu_grd->Lz;
+            } else { // REFLECTING BC
+                gpu_part->w[id] = -gpu_part->w[id];
+                gpu_part->z[id] = 2*gpu_grd->Lz - gpu_part->z[id];
+            }
+        }
+                                                                    
+        if (gpu_part->z[id] < 0){
+            if (gpu_param->PERIODICZ==true){ // PERIODIC
+                gpu_part->z[id] = gpu_part->z[id] + gpu_grd->Lz;
+            } else { // REFLECTING BC
+                gpu_part->w[id] = -gpu_part->w[id];
+                gpu_part->z[id] = -gpu_part->z[id];
+            }
+        }
+
+
+
 }
 
 int mover_PC_gpu(struct particles* part, struct EMfield* field, struct grid* grd, struct parameters* param)

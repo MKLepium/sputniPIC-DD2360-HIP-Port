@@ -130,24 +130,6 @@ int main(int argc, char **argv){
     
     }  // end of one PIC cycle
     
-    /// Release the resources
-    // deallocate field
-    grid_deallocate(&grd);
-    field_deallocate(&grd,&field);
-    field_aux_deallocate(&grd,&field_aux);
-    // interp
-    interp_dens_net_deallocate(&grd,&idn);
-    // remaining
-    delete[] ids;
-    delete[] part;
-
-    // Deallocate interpolated densities and particles
-    for (int is=0; is < param.ns; is++){
-        interp_dens_species_deallocate(&grd,&ids[is]);
-        particle_deallocate(&part[is]);
-    }
-    
-    
     // stop timer
     double iElaps = cpuSecond() - iStart;
     
@@ -159,6 +141,25 @@ int main(int argc, char **argv){
     std::cout << "   Interp. Time / Cycle (s) = " << eInterp/param.ncycles  << std::endl;
     std::cout << "**************************************" << std::endl;
     
+    /// Release the resources
+    // deallocate field
+    grid_deallocate(&grd);
+    field_deallocate(&grd,&field);
+    field_aux_deallocate(&grd,&field_aux);
+    // interp
+    interp_dens_net_deallocate(&grd,&idn);
+
+    // Deallocate interpolated densities and particles
+    for (int is=0; is < param.ns; is++){
+        interp_dens_species_deallocate(&grd,&ids[is]);
+        particle_deallocate(&part[is]);
+    }
+    // remaining
+    delete[] ids;
+    delete[] part;
+    
+    
+
     // exit
     return 0;
 }
