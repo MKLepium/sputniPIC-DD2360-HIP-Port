@@ -130,9 +130,13 @@ int main(int argc, char **argv){
     // deallocate field
     grid_deallocate(&grd);
     field_deallocate(&grd,&field);
+    field_aux_deallocate(&grd,&field_aux);
     // interp
     interp_dens_net_deallocate(&grd,&idn);
     
+    // remaining
+    delete[] ids;
+    delete[] part;
     // Deallocate interpolated densities and particles
     for (int is=0; is < param.ns; is++){
         interp_dens_species_deallocate(&grd,&ids[is]);
@@ -150,7 +154,7 @@ int main(int argc, char **argv){
     std::cout << "   Mover Time / Cycle   (s) = " << eMover/param.ncycles << std::endl;
     std::cout << "   Interp. Time / Cycle (s) = " << eInterp/param.ncycles  << std::endl;
     std::cout << "**************************************" << std::endl;
-    
+
     // exit
     return 0;
 }

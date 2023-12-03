@@ -47,5 +47,9 @@ void particle_aux_deallocate(struct particles_aux* part_aux)
     delete [] part_aux->pyz;
     delete [] part_aux->pzz;
     
+    // deallocate cell index
+    delete [] part_aux->ix_p;
+    delete [] part_aux->iy_p;
+    delete [] part_aux->iz_p;
     
 }
