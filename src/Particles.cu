@@ -194,33 +194,33 @@ __global__ void mover_GPU(struct particles* gpu_part, struct EMfield* gpu_field,
         }
     }
 
-        if (gpu_part->y[id] < 0){
-            if (gpu_param->PERIODICY==true){ // PERIODIC
-                gpu_part->y[id] = gpu_part->y[id] + gpu_grd->Ly;
-            } else { // REFLECTING BC
-                gpu_part->v[id] = -gpu_part->v[id];
-                gpu_part->y[id] = -gpu_part->y[id];
-            }
+    if (gpu_part->y[id] < 0){
+        if (gpu_param->PERIODICY==true){ // PERIODIC
+            gpu_part->y[id] = gpu_part->y[id] + gpu_grd->Ly;
+        } else { // REFLECTING BC
+            gpu_part->v[id] = -gpu_part->v[id];
+            gpu_part->y[id] = -gpu_part->y[id];
         }
-                                                                    
-        // Z-DIRECTION: BC particles
-        if (gpu_part->z[id] > gpu_grd->Lz){
-            if (gpu_param->PERIODICZ==true){ // PERIODIC
-                gpu_part->z[id] = gpu_part->z[id] - gpu_grd->Lz;
-            } else { // REFLECTING BC
-                gpu_part->w[id] = -gpu_part->w[id];
-                gpu_part->z[id] = 2*gpu_grd->Lz - gpu_part->z[id];
-            }
+    }
+                                                                
+    // Z-DIRECTION: BC particles
+    if (gpu_part->z[id] > gpu_grd->Lz){
+        if (gpu_param->PERIODICZ==true){ // PERIODIC
+            gpu_part->z[id] = gpu_part->z[id] - gpu_grd->Lz;
+        } else { // REFLECTING BC
+            gpu_part->w[id] = -gpu_part->w[id];
+            gpu_part->z[id] = 2*gpu_grd->Lz - gpu_part->z[id];
         }
-                                                                    
-        if (gpu_part->z[id] < 0){
-            if (gpu_param->PERIODICZ==true){ // PERIODIC
-                gpu_part->z[id] = gpu_part->z[id] + gpu_grd->Lz;
-            } else { // REFLECTING BC
-                gpu_part->w[id] = -gpu_part->w[id];
-                gpu_part->z[id] = -gpu_part->z[id];
-            }
+    }
+                                                                
+    if (gpu_part->z[id] < 0){
+        if (gpu_param->PERIODICZ==true){ // PERIODIC
+            gpu_part->z[id] = gpu_part->z[id] + gpu_grd->Lz;
+        } else { // REFLECTING BC
+            gpu_part->w[id] = -gpu_part->w[id];
+            gpu_part->z[id] = -gpu_part->z[id];
         }
+    }
 
 
 
