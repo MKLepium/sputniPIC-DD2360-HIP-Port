@@ -1,0 +1,46 @@
+CXX=g++
+CXXFLAGS=-std=c++11 -I./include -O3 -g -Xcompiler -Wall
+
+HIPCC=hipcc
+HIPCCFLAGS= -I./include --offload-arch=gfx90a -std=c++11 -O3 -g --compiler-bindir=$(CXX)
+
+# Use an environment variable to switch between CPU and GPU
+GPU_FLAG ?= $(if $(USE_GPU),-DUSE_GPU,)
+
+SRCDIR=src
+SRCS=$(shell find $(SRCDIR) -name '*.cu' -o -name '*.cpp')
+
+OBJDIR=src
+OBJS=$(subst $(SRCDIR),$(OBJDIR), $(SRCS))
+OBJS:=$(subst .cpp,.o,$(OBJS))
+OBJS:=$(subst .cu,.o,$(OBJS))
+
+BIN := ./bin
+TARGET=sputniPIC.out
+
+all: dir $(BIN)/$(TARGET)
+
+dir: ${BIN}
+  
+${BIN}:
+	mkdir -p $(BIN)
+
+$(BIN)/$(TARGET): $(OBJS)
+	$(HIPCC) $(HIPCCFLAGS) $(GPU_FLAG) $+ -o $@
+
+$(SRCDIR)/%.o: $(SRCDIR)/%.cu
+	$(HIPCC) $(HIPCCFLAGS) $(GPU_FLAG) $< -c -o $@
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	[ -d $(OBJDIR) ] || mkdir $(OBJDIR)
+	$(HIPCC) $(CXXFLAGS) $(GPU_FLAG) $< -c -o $@
+
+
+run_hip: $(BIN)/$(TARGET)
+	HIPCC=$(HIPCC) HIPCCFLAGS=$(HIPCCFLAGS) make all
+
+run: $(BIN)/$(TARGET)
+	$(BIN)/$(TARGET) ./inputfiles/GEM_2D.inp
+clean:
+	rm -rf $(OBJS)
+	rm -rf $(BIN)/$(TARGET)
