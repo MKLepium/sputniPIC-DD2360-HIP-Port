@@ -38,7 +38,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 
 run_hip: $(BIN)/$(TARGET)
-	HIPCC=$(HIPCC) HIPCCFLAGS=$(HIPCCFLAGS) make all
+	$(BIN)/$(TARGET) ./inputfiles/GEM_2D.inp
 
 run: $(BIN)/$(TARGET)
 	$(BIN)/$(TARGET) ./inputfiles/GEM_2D.inp
