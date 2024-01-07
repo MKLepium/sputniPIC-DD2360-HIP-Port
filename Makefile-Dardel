@@ -2,8 +2,8 @@ CXX=CC
 CXXFLAGS=-std=c++11 -I./include -O3 -g -Xcompiler -Wall
 
 HIPCC=hipcc
-HIPCCFLAGS= -I./include --offload-arch=gfx90a -std=c++11 -O3 -g --compiler-bindir=$(CXX)
-
+HIPCCFLAGS= -I./include --offload-arch=gfx90a -std=c++11 -O3
+# hipcc -I./include --offload-arch=gfx90a -std=c++11 -O3
 # Use an environment variable to switch between CPU and GPU
 GPU_FLAG ?= $(if $(USE_GPU),-DUSE_GPU,)
 
