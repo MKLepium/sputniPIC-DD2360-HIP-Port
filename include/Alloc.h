@@ -1,7 +1,6 @@
 #ifndef Alloc_H
 #define Alloc_H
 #include <cstdio>
-#include <cuda_runtime.h>
 
 __host__ __device__
 inline long get_idx(long v, long w, long x, long y, long z, long stride_w, long stride_x, long stride_y, long stride_z)
